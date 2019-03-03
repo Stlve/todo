@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -13,12 +14,16 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toolbar;
 
+import org.litepal.crud.DataSupport;
+
+import java.util.ArrayList;
+
 public class WriteActivity extends AppCompatActivity {
     private android.support.v7.app.ActionBar actionBar;
-    private int eventID;
     private int status;
     private EditText contentText;
     private ImageButton menuView;
+    private Event event;
 
 
     @Override
@@ -26,7 +31,7 @@ public class WriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write);
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
-        EditText contentText = (EditText)findViewById(R.id.editText2);
+        contentText = (EditText)findViewById(R.id.editText2);
         menuView = (ImageButton)findViewById(R.id.menu2);
        setSupportActionBar(toolbar);
        actionBar = getSupportActionBar();
@@ -38,12 +43,12 @@ public class WriteActivity extends AppCompatActivity {
         status = intent.getIntExtra("Status",0);
         if(status == MainActivity.READ){
             //读操作
-            Event event = (Event)intent.getSerializableExtra("Content");
+            ArrayList<Event> nEvents = (ArrayList<Event>) DataSupport.findAll(Event.class);
+            int position = intent.getIntExtra("position",0);
+            event = nEvents.get(position);
             //显示内容和游标放到内容末端
             contentText.setText(event.getName());
             contentText.setSelection(event.getName().length());
-            //获取id
-            eventID = event.getId();
         }
         //按钮按下背景变化
         //menuView.setOnTouchListener(new View.OnTouchListener() {
@@ -61,17 +66,13 @@ public class WriteActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //新增便签
                 if(status == MainActivity.WRITE){
-                    Intent intent1 = new Intent(WriteActivity.this,MainActivity.class);
-                    startActivity(intent1);
                     saveData();
                 }
                 else if(status == MainActivity.READ){
                     //读取便签后更新数据
-                    Intent intent1 = new Intent(WriteActivity.this,MainActivity.class);
-                    startActivity(intent1);
                     updateData();
                 }
-                finish();
+               finish();
             }
         });
     }
@@ -90,20 +91,21 @@ public class WriteActivity extends AppCompatActivity {
         return true;
     }
 
-
     public void updateData(){
         if(!(contentText.getText().toString().equals(""))){
-            Event event = new Event();
             event.setName(contentText.getText().toString());
+            event.save();
         }
 
     }
 
     public void saveData(){
-        if(!(contentText.getText().toString().equals("")) ){
-            Event event = new Event();
-            event.setName(contentText.getText().toString());
-            event.save();
+        if (contentText.getText() != null){
+            if (!(contentText.getText().toString().equals(""))){
+                Event event = new Event();
+                event.setName(contentText.getText().toString());
+                event.save();
+            }
         }
 
     }

@@ -8,16 +8,6 @@ public class Event extends DataSupport implements Serializable {
     private int id;
     private String name;
     private boolean checked;
-    private int you;
-
-    public int getYou() {
-        return you;
-    }
-
-    public void setYou(int you) {
-        this.you = you;
-    }
-
     public void setId(int id) {
         this.id = id;
     }

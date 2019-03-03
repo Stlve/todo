@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this,WriteActivity.class);
                 status = 1;
                 intent.putExtra("Status", status);//传递信息
+                intent.putExtra("position",0);
                 startActivity(intent);
             }
         });
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 Event event = eventList.get(position);
                 status = 2;
                 intent.putExtra("Status", status);
-                intent.putExtra("Content",event);//传递对象
+                intent.putExtra("position",position);
                 startActivity(intent);
 
 
